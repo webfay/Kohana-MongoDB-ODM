@@ -589,6 +589,28 @@ class Kohana_ODM extends Model {
 	}
 
 	/**
+	 * Get auto_increment like MySql
+	 * @param string $Id name column where save increment
+	 * @return int increment Id
+	 */
+	public function sId($Id)
+	{
+		$this->_connect();
+
+		$rs = $this->_db->{$this->_collection_name}->findAndModify(
+		     array('_id' => $Id),
+		     array('$inc' => array("seq" => 1)),
+		     null,
+		     array(
+		        "new" => true,
+						"upsert" => true,
+		    )
+		);
+
+		return (int)$rs['seq'];
+	}
+
+	/**
 	 * Find documents in the collection
 	 *
 	 * @return ODM_Collection

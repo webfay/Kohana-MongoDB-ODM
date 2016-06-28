@@ -1,4 +1,3 @@
-**Since there [will be no more official releases of Kohana](http://forum.kohanaframework.org/discussion/12509/final-releases-of-kohana-beginning-of-ohanzee), I'm no longer maintaining this module.**
 
 ---
 
