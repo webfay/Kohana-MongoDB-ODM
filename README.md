@@ -1,3 +1,4 @@
+#DEPRECATED, PLS DON'T USE THIS LIB
 
 ---
 
