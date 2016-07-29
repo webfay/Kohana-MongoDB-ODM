@@ -1,4 +1,4 @@
-#DEPRECATED, PLS DON'T USE THIS LIB
+#DEPRECATED, PLS DON'T USE THIS LIB, USE - https://github.com/foozzi/kongodb
 
 ---
 
