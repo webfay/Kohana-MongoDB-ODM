@@ -1085,6 +1085,9 @@ class Kohana_ODM extends Model {
 			}
 		}
 
+		if($type == 'array' && is_array($value))
+			return 1;
+
 		// Enforce string (int is ok as it can be converted)
 		if ($type == 'string' AND (is_string($value) OR is_int($value) OR is_null($value)))
 		{
