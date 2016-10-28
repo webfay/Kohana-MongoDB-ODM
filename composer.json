@@ -1,0 +1,26 @@
+{
+	"name":        "kohana/odm",
+	"type":        "kohana-module",
+	"description": "Kohana ODM module",
+	"homepage":    "",
+	"license":     "BSD-3-Clause",
+	"keywords":    ["kohana", "framework", "ODM", "database"],
+	"authors": [
+		{
+			"name":     "Calum",
+			"email":    "calum@openmailbox.org",
+			"homepage": "https://github.com/kaamaru",
+			"role":     "developer"
+		}
+	],
+	"support": {
+		"issues":   "https://github.com/kaamaru/Kohana-MongoDB-ODM/issues",
+		"source":   "https://github.com/kaamaru/Kohana-MongoDB-ODM"
+	},
+	"require": {
+		"composer/installers": "~1.0",
+		"kohana/core":         ">=3.3",
+		"kohana/database":     ">=3.3",
+		"php":                 ">=5.3.3"
+	}
+}
