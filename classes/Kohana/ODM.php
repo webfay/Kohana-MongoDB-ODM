@@ -518,7 +518,8 @@ class Kohana_ODM extends Model {
 			// Remove current document
 			$this->_profile(function()
 			{
-				$this->_db->{$this->_collection_name}->remove($this->_document, TRUE);
+
+				$this->_db->{$this->_collection_name}->remove($this->_document);
 			}, 'Remove', $this->_document);
 
 			$this->_document = array();
@@ -529,7 +530,7 @@ class Kohana_ODM extends Model {
 			// Remove documents in query
 			$this->_profile(function()
 			{
-				$this->_db->{$this->_collection_name}->remove($this->_query, TRUE);
+				$this->_db->{$this->_collection_name}->remove($this->_query);
 			}, 'remove', $this->_query);
 		}
 
@@ -593,12 +594,12 @@ class Kohana_ODM extends Model {
 	 * @param string $Id name column where save increment
 	 * @return int increment Id
 	 */
-	public function sId($Id)
+	public function sId()
 	{
 		$this->_connect();
 
-		$rs = $this->_db->{$this->_collection_name}->findAndModify(
-		     array('_id' => $Id),
+		$rs = $this->_db->{'Ids'}->findAndModify(
+		     array('_id' => $this->_collection_name),
 		     array('$inc' => array("seq" => 1)),
 		     null,
 		     array(
@@ -643,16 +644,6 @@ class Kohana_ODM extends Model {
 		$this->clear();
 
 		return $result;
-	}
-
-	/**
-	 * Return the document as an array
-	 *
-	 * @return array
-	 */
-	public function as_array()
-	{
-		return array_merge($this->_document, get_object_vars($this));
 	}
 
 	/**
@@ -1078,6 +1069,7 @@ class Kohana_ODM extends Model {
 				return;
 			}
 
+
 			// Enforce MongoId
 			if ($type == 'id' AND get_class($value) == 'MongoId')
 			{
@@ -1086,7 +1078,8 @@ class Kohana_ODM extends Model {
 		}
 
 		if($type == 'array' && is_array($value))
-			return 1;
+		return 1;
+
 
 		// Enforce string (int is ok as it can be converted)
 		if ($type == 'string' AND (is_string($value) OR is_int($value) OR is_null($value)))
@@ -1242,6 +1235,15 @@ class Kohana_ODM extends Model {
 				$value = $method->invokeArgs(NULL, $params);
 			}
 		}
+	}
+
+	/**
+		* Return document with all fields
+		* @return array
+	*/
+	public function _get_document()
+	{
+		return $this->_document;
 	}
 
 	/**

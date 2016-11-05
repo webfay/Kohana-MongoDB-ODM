@@ -25,6 +25,21 @@ class Kohana_ODM_Collection extends ArrayObject {
 	}
 
 	/**
+		* Convert object ODM_Colletion to as_array
+		* @return array
+	*/
+
+	public function as_array()
+	{
+		$documents = [];
+		foreach($this as $_documents)
+		{
+			$documents[] = $_documents->_get_document();
+		}
+		return $documents;
+	}
+
+	/**
 	 * Replace property with an object.
 	 *
 	 * For example, you could add users to their posts.
