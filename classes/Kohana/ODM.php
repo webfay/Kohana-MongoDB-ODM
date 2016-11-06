@@ -1247,6 +1247,16 @@ class Kohana_ODM extends Model {
 	}
 
 	/**
+		* Return collection name
+		* @return string
+	*/
+
+	public function _get_collection_name()
+	{
+		return $this->_collection_name;
+	}
+
+	/**
 	 * Prepares the model database connection
 	 */
 	protected function _connect()

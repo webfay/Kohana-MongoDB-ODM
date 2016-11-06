@@ -26,16 +26,36 @@ class Kohana_ODM_Collection extends ArrayObject {
 
 	/**
 		* Convert object ODM_Colletion to as_array
+		* @param string $inc_field inc field for set keys of array
 		* @return array
 	*/
 
-	public function as_array()
+	public function as_array($inc_field = null)
 	{
 		$documents = [];
-		foreach($this as $_documents)
+
+		if(!$inc_field)
 		{
-			$documents[] = $_documents->_get_document();
+			foreach($this as $_documents)
+			{
+				$documents[] = $_documents->_get_document();
+			}
 		}
+		else
+		{
+			foreach($this as $_documents)
+			{
+				$document = $_documents->_get_document();
+				if(!isset($_documents->{$inc_field}))
+				{
+					// @TODO: fix architecture, that remove ODM->_get_collection_name() and ODM->_get_document
+					throw new Kohana_Exception('Field '. $inc_field. ' is not exists in collection '. $_documents->_get_collection_name());
+				}
+				$documents[$document[$inc_field]] = $document;
+			}
+		}
+
+
 		return $documents;
 	}
 
