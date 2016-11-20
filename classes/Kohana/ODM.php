@@ -9,6 +9,7 @@
  */
 class Kohana_ODM extends Model {
 
+
 	/**
 	 * The message filename used for validation errors.
 	 * Defaults to ODM::$_object_name
@@ -90,6 +91,14 @@ class Kohana_ODM extends Model {
 	 * @var array
 	 */
 	protected $_filters = array();
+
+	/**
+		* @var array
+	*/
+	private $_set_data_exception = [];
+
+	const MODEL_CLASS_PREFIX = 'Model_';
+
 
 	/**
 	 * Constructs a new model
@@ -197,7 +206,7 @@ class Kohana_ODM extends Model {
 	{
 		if ($name)
 		{
-			$model_name = 'Model_'.$name;
+			$model_name = self::MODEL_CLASS_PREFIX .$name;
 			$instance = new $model_name;
 			return $instance;
 		}
@@ -477,13 +486,26 @@ class Kohana_ODM extends Model {
 	 */
 	public function save(Validation $extra_validation = NULL)
 	{
-		$this->check($extra_validation);
-
-		$this->_profile(function()
+		return $this
+			->beforeSave()
+			->check($extra_validation)
+			->_profile(function()
 		{
 			$this->_db->{$this->_collection_name}->save($this->_document);
 		}, 'save', $this->_query);
+	}
 
+	/**
+		* throws exception if some type not match schema
+		* @return $this
+	*/
+	private function beforeSave()
+	{
+		if(sizeof($this->_set_data_exception))
+			throw new Kohana_Exception(
+				$this->_set_data_exception['text'],
+				$this->_set_data_exception['details']
+			);
 		return $this;
 	}
 
@@ -495,14 +517,13 @@ class Kohana_ODM extends Model {
 	 */
 	public function insert(Validation $extra_validation = NULL)
 	{
-		$this->check($extra_validation);
-
-		$this->_profile(function()
+		return $this
+			->beforeSave()
+			->check($extra_validation)
+			->_profile(function()
 		{
 			$this->_db->{$this->_collection_name}->insert($this->_document);
 		}, 'insert', $this->_query);
-
-		return $this;
 	}
 
 	/**
@@ -625,7 +646,6 @@ class Kohana_ODM extends Model {
 		{
 			$result[] = ODM::factory($this->_object_name)->load($document);
 		}
-
 		return new ODM_Collection($result);
 	}
 
@@ -760,10 +780,15 @@ class Kohana_ODM extends Model {
 				// Merge any possible errors from the external object
 				$exception->add_object('_external', $extra_validation);
 			}
-			throw $exception;
+			// throw $exception;
 		}
 
 		return $this;
+	}
+
+	public function getValidationErrors()
+	{
+		return $this->_validation;
 	}
 
 	/**
@@ -1103,14 +1128,19 @@ class Kohana_ODM extends Model {
 			return;
 		}
 
-		throw new Kohana_Exception(
-			':field is not of type :type as specified in the :model schema',
-			array(
+		$this->_set_data_exception =
+		[
+			'text' => 	':field is not of type :type as specified in the :model schema',
+			'details' =>
+			[
 				':field' => $field,
 				':type'  => $type,
 				':model' => get_class($this)
-			)
-		);
+			]
+		];
+
+
+		return ;
 	}
 
 	/**
@@ -1238,15 +1268,6 @@ class Kohana_ODM extends Model {
 	}
 
 	/**
-		* Return document with all fields
-		* @return array
-	*/
-	public function _get_document()
-	{
-		return $this->_document;
-	}
-
-	/**
 		* Return collection name
 		* @return string
 	*/
@@ -1267,6 +1288,31 @@ class Kohana_ODM extends Model {
 			$client = new MongoClient($config['server']);
 			$this->_db = $client->selectDB($config['database']);
 		}
+	}
+
+	/**
+		* @return array object as array
+	*/
+
+	public function as_array()
+	{
+		return $this->_document;
+	}
+
+	/**
+		* @return array current model collection schema
+	*/
+	public function get_schema()
+	{
+		return $this->_schema;
+	}
+
+	/**
+		* @return string name of current model
+	*/
+	public function get_name()
+	{
+		return str_replace(self::MODEL_CLASS_PREFIX, '', get_class($this));
 	}
 
 }
