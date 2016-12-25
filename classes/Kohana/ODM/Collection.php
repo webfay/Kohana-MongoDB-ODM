@@ -38,14 +38,14 @@ class Kohana_ODM_Collection extends ArrayObject {
 		{
 			foreach($this as $_documents)
 			{
-				$documents[] = $_documents->_get_document();
+				$documents[] = $_documents->as_array();
 			}
 		}
 		else
 		{
 			foreach($this as $_documents)
 			{
-				$document = $_documents->_get_document();
+				$document = $_documents->as_array();
 				if(!isset($_documents->{$inc_field}))
 				{
 					// @TODO: fix architecture, that remove ODM->_get_collection_name() and ODM->_get_document
@@ -57,6 +57,22 @@ class Kohana_ODM_Collection extends ArrayObject {
 
 
 		return $documents;
+	}
+
+	/**
+		* Remove all loaded documents in collection
+		* @return object
+	*/
+
+	public
+
+	function remove()
+	{
+		foreach($this as $document)
+		{
+			$document->remove();
+		}
+		return $this;
 	}
 
 	/**
